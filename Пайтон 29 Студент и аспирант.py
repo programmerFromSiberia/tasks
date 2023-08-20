@@ -49,7 +49,7 @@ Student и Aspirant. В массиве создаются объекты с по
 аспирантом или студентом обычного курса."""
 
 class Student:
-    def init(self, firstName, lastName, group, averageMark):
+    def __init__(self, firstName, lastName, group, averageMark):
         self.firstName = firstName
         self.lastName = lastName
         self.group = group
@@ -62,8 +62,8 @@ class Student:
             return 1900
 
 class Aspirant(Student):
-    def init(self, firstName, lastName, group, averageMark, scientificWork):
-        super().init(firstName, lastName, group, averageMark)
+    def __init__(self, firstName, lastName, group, averageMark, scientificWork):
+        super().__init__(firstName, lastName, group, averageMark)
         self.scientificWork = scientificWork
     
     def getScholarship(self):
