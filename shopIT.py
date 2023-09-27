@@ -1,35 +1,40 @@
 import sqlite3
 
-# Создание базы данных и установка соединения
+# Создание базы данных
 conn = sqlite3.connect('shopIT.db')
-cursor = conn.cursor()
+c = conn.cursor()
 
-# Создание таблицы "Компьютеры"
-cursor.execute('''CREATE TABLE IF NOT EXISTS Компьютеры
-                  (тип TEXT, бренд TEXT, стоимость REAL)''')
+# Создание таблицы Salespeople
+c.execute('''CREATE TABLE IF NOT EXISTS Salespeople
+             (id INTEGER PRIMARY KEY,
+              sname TEXT,
+              city TEXT,
+              comm REAL)''')
 
-# Вставка данных в таблицу
-cursor.execute("INSERT INTO Компьютеры VALUES ('ноутбук', 'HP', 35000)")
-cursor.execute("INSERT INTO Компьютеры VALUES ('стационарный компьютер', 'HP', 50000)")
-cursor.execute("INSERT INTO Компьютеры VALUES ('моноблок', 'Dell', 45000)")
-cursor.execute("INSERT INTO Компьютеры VALUES ('ноутбук', 'Lenovo', 25000)")
+# Создание таблицы Customers
+c.execute('''CREATE TABLE IF NOT EXISTS Customers
+             (id INTEGER PRIMARY KEY,
+              cname TEXT,
+              city TEXT,
+              rating INTEGER,
+              id_sp INTEGER,
+              FOREIGN KEY(id_sp) REFERENCES Salespeople(id))''')
 
-# Выполнение запросов и вывод результатов
-cursor.execute("SELECT * FROM Компьютеры WHERE бренд='HP'")
-print("Все компьютеры бренда HP:")
-for row in cursor.fetchall():
-    print(row)
+# Вставка данных из файла Salespeople.txt
+with open('F:\\Учеба\\ТОП Академия\\Домашние задания\\SQL\\ДЗ SQL\\SQL35\\Salespeople.txt', 'r') as file:
+    lines = file.readlines()
+    for line in lines:
+        data = line.strip().split(',')
+        c.execute('''INSERT INTO Salespeople (sname, city, comm)
+                     VALUES (?, ?, ?)''', (data[0], data[1], float(data[2])))
 
-cursor.execute("SELECT * FROM Компьютеры WHERE стоимость > 40000")
-print("Компьютеры стоимостью более 40000:")
-for row in cursor.fetchall():
-    print(row)
+# Вставка данных из файла Customers.txt
+with open('F:\\Учеба\\ТОП Академия\\Домашние задания\\SQL\\ДЗ SQL\\SQL35\\Customers.txt', 'r') as file:
+    lines = file.readlines()
+    for line in lines:
+        data = line.strip().split(',')
+        c.execute('''INSERT INTO Customers (cname, city, rating, id_sp)
+                     VALUES (?, ?, ?, ?)''', (data[0], data[1], int(data[2]), int(data[3])))
 
-cursor.execute("SELECT * FROM Компьютеры WHERE тип='ноутбук' AND стоимость < 30000")
-print("Компьютеры типа ноутбук и стоимостью менее 30000:")
-for row in cursor.fetchall():
-    print(row)
-
-# Закрытие соединения с базой данных
 conn.commit()
 conn.close()
